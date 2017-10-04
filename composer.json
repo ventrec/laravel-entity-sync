@@ -1,0 +1,17 @@
+{
+  "name": "ventrec/laravel-entity-sync",
+  "description": "Syncs entities from one project to another",
+  "type": "package",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Runar Jørgensen",
+      "email": "ventrec@ventrec.org"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Ventrec\\LaravelEntitySync\\": "src/"
+    }
+  }
+}
