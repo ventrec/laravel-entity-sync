@@ -9,6 +9,9 @@
       "email": "ventrec@ventrec.org"
     }
   ],
+  "require": {
+    "guzzlehttp/guzzle": "^6.2"
+  },
   "autoload": {
     "psr-4": {
       "Ventrec\\LaravelEntitySync\\": "src/"
