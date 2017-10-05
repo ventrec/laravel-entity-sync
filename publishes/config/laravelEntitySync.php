@@ -14,4 +14,9 @@ return [
      * The endpoint that the entities will be synced towards
      */
     'endpoint' => '',
+
+    /**
+     * The auth token that should be used to verify the request at the other end
+     */
+    'api_auth_token' => '',
 ];
