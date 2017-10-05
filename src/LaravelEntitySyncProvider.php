@@ -3,6 +3,7 @@
 namespace Ventrec\LaravelEntitySync;
 
 use Illuminate\Support\ServiceProvider;
+use Ventrec\LaravelEntitySync\Observers\EntityObserver;
 
 class LaravelEntitySyncProvider extends ServiceProvider
 {
@@ -27,8 +28,7 @@ class LaravelEntitySyncProvider extends ServiceProvider
         $entities = config('laravelEntitySync.entities');
 
         foreach ($entities as $entity) {
-            // Do we need a static call here instead?
-            app($entity)->observe();
+            app($entity)->observe(new EntityObserver);
         }
     }
 }
