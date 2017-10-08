@@ -24,11 +24,16 @@ class EntitySyncer implements ShouldQueue
         'updated' => 'patch',
         'deleted' => 'delete',
     ];
+    /**
+     * @var String
+     */
+    private $entityName;
 
-    public function __construct($model, $event)
+    public function __construct($model, $entityName, $event)
     {
         $this->model = $model;
         $this->event = $event;
+        $this->entityName = $entityName;
     }
 
     public function handle(Client $client)
@@ -40,7 +45,10 @@ class EntitySyncer implements ShouldQueue
                     'X-AUTH-API-TOKEN' => config('laravelEntitySync.api_auth_token'),
                 ],
                 'json' => [
-                    'entity' => $this->model,
+                    'entity' => [
+                        'data' => $this->model,
+                        'name' => $this->entityName,
+                    ],
                 ],
             ]
         );
