@@ -2,6 +2,11 @@
 
 return [
     /**
+     * Gives you the possibility to disable syncing in some cases
+     */
+    'enabled' => env('ENTITY_SYNC_ENABLED', true),
+
+    /**
      * Specify the different entities you would like to sync
      * Example:
      * [

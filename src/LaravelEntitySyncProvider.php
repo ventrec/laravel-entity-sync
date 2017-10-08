@@ -21,14 +21,17 @@ class LaravelEntitySyncProvider extends ServiceProvider
      */
     public function register()
     {
-        /**
-         * Register event listener for entities defined in the config file
-         * We want to listen to created, updated and deleted events.
-         */
-        $entities = config('laravelEntitySync.entities');
+        // Only run if package is enabled
+        if (config('laravelEntitySync.enabled')) {
+            /**
+             * Register event listener for entities defined in the config file
+             * We want to listen to created, updated and deleted events.
+             */
+            $entities = config('laravelEntitySync.entities');
 
-        foreach ($entities as $entity) {
-            app($entity)->observe(new EntityObserver);
+            foreach ($entities as $entity) {
+                app($entity)->observe(new EntityObserver);
+            }
         }
     }
 }
