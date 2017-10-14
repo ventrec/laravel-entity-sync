@@ -45,10 +45,8 @@ class EntitySyncer implements ShouldQueue
                     'X-AUTH-API-TOKEN' => config('laravelEntitySync.api_auth_token'),
                 ],
                 'json' => [
-                    'entity' => [
-                        'data' => $this->model,
-                        'name' => $this->entityName,
-                    ],
+                    'entity' => $this->model,
+                    'name' => $this->entityName,
                 ],
             ]
         );
