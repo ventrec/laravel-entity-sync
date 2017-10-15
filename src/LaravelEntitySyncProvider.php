@@ -12,17 +12,9 @@ class LaravelEntitySyncProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../publishes/config/laravelEntitySync.php' => config_path('laravelEntitySync.php'),
         ], 'config');
-    }
 
-    /**
-     * Register bindings in the container.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        // Only run if package is enabled
-        if (config('laravelEntitySync.enabled')) {
+        // Only run if app is not running in console and package is enabled
+        if (!app()->runningInConsole() and config('laravelEntitySync.enabled')) {
             /**
              * Register event listener for entities defined in the config file
              * We want to listen to created, updated and deleted events.

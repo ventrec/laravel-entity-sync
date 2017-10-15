@@ -6,7 +6,7 @@ Easily sync entities, when changes occur, to another project.
 
 This package is designed to sync entities from one laravel project to another, something that can be useful if you have a master and client setup.
 
-For this to work, you will need to install the client package in your other laravel project.
+For this to work, you will need to install the [client package](https://github.com/ventrec/laravel-entity-sync-endpoint) in the laravel project that you wish to sync your entities to.
 
 ## Installation
 

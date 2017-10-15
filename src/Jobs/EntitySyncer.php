@@ -13,27 +13,33 @@ class EntitySyncer implements ShouldQueue
 {
     use Dispatchable, Queueable, SerializesModels;
 
+    /**
+     * @var String
+     */
+    private $entityName;
+    /**
+     * @var object
+     */
     private $model;
     /**
      * A string that will be either 'create', 'update' or 'delete'
      * @var String
      */
     private $event;
+    /**
+     * Actions that the event will be translated to
+     * @var array
+     */
     private $actions = [
         'created' => 'post',
         'updated' => 'patch',
-        'deleted' => 'delete',
     ];
-    /**
-     * @var String
-     */
-    private $entityName;
 
-    public function __construct($model, $entityName, $event)
+    public function __construct($entityName, $model, $event)
     {
+        $this->entityName = $entityName;
         $this->model = $model;
         $this->event = $event;
-        $this->entityName = $entityName;
     }
 
     public function handle(Client $client)
