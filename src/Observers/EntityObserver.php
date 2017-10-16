@@ -10,12 +10,12 @@ class EntityObserver
 {
     public function created(Model $entity)
     {
-        dispatch(new EntitySyncer($this->resolveEntityName($entity), $entity, 'created'));
+        dispatch(new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntity($entity), 'created'));
     }
 
     public function updated(Model $entity)
     {
-        dispatch(new EntitySyncer($this->resolveEntityName($entity), $entity, 'updated'));
+        dispatch(new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntity($entity), 'updated'));
     }
 
     public function deleted(Model $entity)
@@ -29,5 +29,16 @@ class EntityObserver
         $data = substr($class, (strrpos($class, '\\') + 1));
 
         return camel_case($data);
+    }
+
+    private function resolveEntity($entity)
+    {
+        if (method_exists($entity, 'ignoreSyncAttributes')) {
+            foreach ($entity->ignoreSyncAttributes() as $attribute) {
+                unset($entity->{$attribute});
+            }
+        }
+
+        return $entity;
     }
 }

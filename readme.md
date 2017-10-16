@@ -18,6 +18,20 @@ For this to work, you will need to install the [client package](https://github.c
     - Enter the full url to the endpoint where the requests should go.
     - Enter an api token that should be used to verify the requests
     
+## Usage
+
+In some cases you might have attributes on a model that you do not want to sync. For this you can define a method named `ignoreSyncAttributes` that returns an array containing the name of attributes you do not want to sync.
+
+**Example**
+
+In a User model you might want to exclude the password:
+```php
+public function ignoreSyncAttributes()
+{
+    return ['password'];
+}
+```
+    
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
