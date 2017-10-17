@@ -3,6 +3,7 @@
 namespace Ventrec\LaravelEntitySync\Observers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Ventrec\LaravelEntitySync\Jobs\EntitySyncer;
 use Ventrec\LaravelEntitySync\Jobs\SyncDeletedEntity;
 
@@ -20,7 +21,13 @@ class EntityObserver
 
     public function deleted(Model $entity)
     {
-        dispatch(new SyncDeletedEntity($this->resolveEntityName($entity), $entity->id, $entity->isForceDeleting()));
+        if (in_array(SoftDeletes::class, class_uses($entity))) {
+            $forceDelete = $entity->isForceDeleting();
+        } else {
+            $forceDelete = false;
+        }
+
+        dispatch(new SyncDeletedEntity($this->resolveEntityName($entity), $entity->id, $forceDelete));
     }
 
     private function resolveEntityName($entity)
