@@ -31,6 +31,16 @@ public function ignoreSyncAttributes()
     return ['password'];
 }
 ```
+
+### Prevent observer from running while seeding
+
+In order to prevent the observer from running while seeding, you have to disable the package in runtime.
+
+In your `DatabaseSeeder` class, add the following line at the top of the `run()` method:
+
+```php
+config(['laravelEntitySync.enabled' => false]);
+```
     
 ## License
 
