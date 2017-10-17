@@ -40,12 +40,14 @@ class EntityObserver
 
     private function resolveEntity($entity)
     {
+        $data = $entity->toArray();
+
         if (method_exists($entity, 'ignoreSyncAttributes')) {
             foreach ($entity->ignoreSyncAttributes() as $attribute) {
-                unset($entity->{$attribute});
+                unset($data[$attribute]);
             }
         }
 
-        return $entity;
+        return $data;
     }
 }
