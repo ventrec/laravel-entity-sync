@@ -11,14 +11,28 @@ class EntityObserver
 {
     public function created(Model $entity)
     {
-        dispatch(new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntity($entity), 'created'));
+        dispatch(new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntityData($entity), 'created'));
     }
 
     public function updated(Model $entity)
     {
-        dispatch(new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntity($entity), 'updated'));
-    }
+        if (method_exists($entity, 'ignoreSyncAttributes')) {
+            // Get the updated fields and remove updated_at and fields we would like to ignore
+            $updatedFields = collect($entity->getDirty())
+                ->except(array_merge($entity->ignoreSyncAttributes(), ['updated_at']));
 
+            // If there is still updated fields, we continue with the update
+            if ($updatedFields->isNotEmpty()) {
+                dispatch(
+                    new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntityData($entity), 'updated')
+                );
+            }
+        } else {
+            dispatch(
+                new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntityData($entity), 'updated')
+            );
+        }
+    }
     public function deleted(Model $entity)
     {
         if (in_array(SoftDeletes::class, class_uses($entity))) {
@@ -38,7 +52,7 @@ class EntityObserver
         return camel_case($data);
     }
 
-    private function resolveEntity($entity)
+    private function resolveEntityData($entity)
     {
         $data = $entity->toArray();
 
