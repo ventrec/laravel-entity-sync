@@ -2,6 +2,10 @@
 
 Easily sync entities, when changes occur, to another project.
 
+**WARNING**
+
+This package is still under development. Breaking changes will occur. Use at your own risk.
+
 ## Introduction
 
 This package is designed to sync entities from one laravel project to another, something that can be useful if you have a master and client setup.

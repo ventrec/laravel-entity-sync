@@ -11,7 +11,13 @@ class EntityObserver
 {
     public function created(Model $entity)
     {
-        dispatch(new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntityData($entity), 'created'));
+        /*
+         * Only run if the package is enabled.
+         * This makes it possible to change the config in realtime in order to prevent sync while seeding
+         */
+        if (config('laravelEntitySync.enabled')) {
+            dispatch(new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntityData($entity), 'created'));
+        }
     }
 
     public function updated(Model $entity)
