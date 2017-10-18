@@ -22,6 +22,9 @@ class EntityObserver
 
     public function updated(Model $entity)
     {
+        // Get all columns of the current table you are querying. Returns an array with the column names.
+        $tableRowsWithoutRelationFields = $this->removeRelations($entity);
+
         if (method_exists($entity, 'ignoreSyncAttributes')) {
             // Get the updated fields and remove updated_at and fields we would like to ignore
             $updatedFields = collect($entity->getDirty())
@@ -30,15 +33,24 @@ class EntityObserver
             // If there is still updated fields, we continue with the update
             if ($updatedFields->isNotEmpty()) {
                 dispatch(
-                    new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntityData($entity), 'updated')
+                    new EntitySyncer(
+                        $this->resolveEntityName($entity),
+                        $this->resolveEntityData($entity, $tableRowsWithoutRelationFields),
+                        'updated'
+                    )
                 );
             }
         } else {
             dispatch(
-                new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntityData($entity), 'updated')
+                new EntitySyncer(
+                    $this->resolveEntityName($entity),
+                    $this->resolveEntityData($entity, $tableRowsWithoutRelationFields),
+                    'updated'
+                )
             );
         }
     }
+
     public function deleted(Model $entity)
     {
         if (in_array(SoftDeletes::class, class_uses($entity))) {
@@ -58,9 +70,13 @@ class EntityObserver
         return camel_case($data);
     }
 
-    private function resolveEntityData($entity)
+    private function resolveEntityData($entity, $modifiedData = null)
     {
-        $data = $entity->toArray();
+        if ($modifiedData) {
+            $data = $modifiedData;
+        } else {
+            $data = $entity->toArray();
+        }
 
         if (method_exists($entity, 'ignoreSyncAttributes')) {
             foreach ($entity->ignoreSyncAttributes() as $attribute) {
@@ -69,5 +85,18 @@ class EntityObserver
         }
 
         return $data;
+    }
+
+    private function removeRelations($entity)
+    {
+        return collect($entity)->only($this->getModelProperties($entity));
+    }
+
+    /*
+     * Fetches all the column names from the current database table you are querying
+     */
+    private function getModelProperties($entity)
+    {
+        return $entity->getConnection()->getSchemaBuilder()->getColumnListing($entity->getTable());
     }
 }
