@@ -22,8 +22,8 @@ class EntityObserver
 
     public function updated(Model $entity)
     {
-        // Get all columns of the current table you are querying. Returns an array with the column names.
-        $tableRowsWithoutRelationFields = $this->removeRelations($entity);
+        // All fields without relations and ignored fields
+        $fillableData = $this->resolveEntityData($entity, $this->removeRelations($entity));
 
         if (method_exists($entity, 'ignoreSyncAttributes')) {
             // Get the updated fields and remove updated_at and fields we would like to ignore
@@ -32,22 +32,10 @@ class EntityObserver
 
             // If there is still updated fields, we continue with the update
             if ($updatedFields->isNotEmpty()) {
-                dispatch(
-                    new EntitySyncer(
-                        $this->resolveEntityName($entity),
-                        $this->resolveEntityData($entity, $tableRowsWithoutRelationFields),
-                        'updated'
-                    )
-                );
+                dispatch(new EntitySyncer($this->resolveEntityName($entity), $fillableData, 'updated'));
             }
         } else {
-            dispatch(
-                new EntitySyncer(
-                    $this->resolveEntityName($entity),
-                    $this->resolveEntityData($entity, $tableRowsWithoutRelationFields),
-                    'updated'
-                )
-            );
+            dispatch(new EntitySyncer($this->resolveEntityName($entity), $fillableData, 'updated'));
         }
     }
 
@@ -72,10 +60,10 @@ class EntityObserver
 
     private function resolveEntityData($entity, $modifiedData = null)
     {
+        $data = $entity->toArray();
+
         if ($modifiedData) {
             $data = $modifiedData;
-        } else {
-            $data = $entity->toArray();
         }
 
         if (method_exists($entity, 'ignoreSyncAttributes')) {
