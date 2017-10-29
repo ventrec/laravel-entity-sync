@@ -15,13 +15,23 @@ class EntityObserver
          * Only run if the package is enabled.
          * This makes it possible to change the config in realtime in order to prevent sync while seeding
          */
-        if (config('laravelEntitySync.enabled')) {
-            dispatch(new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntityData($entity), 'created'));
+        if (!config('laravelEntitySync.enabled')) {
+            return;
         }
+
+        dispatch(new EntitySyncer($this->resolveEntityName($entity), $this->resolveEntityData($entity), 'created'));
     }
 
     public function updated(Model $entity)
     {
+        /*
+         * Only run if the package is enabled.
+         * This makes it possible to change the config in realtime in order to prevent sync while seeding
+         */
+        if (!config('laravelEntitySync.enabled')) {
+            return;
+        }
+
         // All fields without relations and ignored fields
         $fillableData = $this->resolveEntityData($entity, $this->removeRelations($entity));
 
@@ -41,6 +51,14 @@ class EntityObserver
 
     public function deleted(Model $entity)
     {
+        /*
+         * Only run if the package is enabled.
+         * This makes it possible to change the config in realtime in order to prevent sync while seeding
+         */
+        if (!config('laravelEntitySync.enabled')) {
+            return;
+        }
+
         if (in_array(SoftDeletes::class, class_uses($entity))) {
             $forceDelete = $entity->isForceDeleting();
         } else {

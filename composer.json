@@ -12,10 +12,22 @@
   "require": {
     "guzzlehttp/guzzle": "^6.2"
   },
+  "require-dev": {
+    "orchestra/testbench": "^3.5",
+    "phpunit/phpunit": "^6.4"
+  },
   "autoload": {
     "psr-4": {
       "Ventrec\\LaravelEntitySync\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Ventrec\\LaravelEntitySync\\Test\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
   },
   "extra": {
     "laravel": {
